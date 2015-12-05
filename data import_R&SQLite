@@ -1,0 +1,42 @@
+library(RSQLite)
+library(data.table)
+
+# import all the data into database
+dir <- "...../pums/" # directory where data stored
+dcon <- dbConnect(SQLite(), dbname="Final_project_sqlite")
+
+dbSendQuery(conn=dcon, "
+BEGIN TRANSACTION;
+            ")
+# read the data as data.frame
+houA <- fread(paste0(dir, "ss13husa.csv"))
+houB <- fread(paste0(dir, "ss13husb.csv"))
+
+# copy data frame to data base
+dbWriteTable(conn=dcon, name="house", hou_total,
+             append=TRUE, row.names=FALSE)
+
+peoA <- fread(paste0(dir, "ss13pusa.csv"))
+peoB <- fread(paste0(dir, "ss13pusb.csv"))
+dbWriteTable(conn=dcon, name="peoA", peoA,
+             append=TRUE, row.names=FALSE)
+dbWriteTable(conn=dcon, name="peoB", peoB,
+             append=TRUE, row.names=FALSE)
+rm(peoA, peoB)
+
+dbSendQuery(conn=dcon, "
+            COMMIT;
+            ")
+
+dbSendQuery(dcon, "
+            DROP TABLE peoA, peoB;
+            ")
+#Check about name in the table and whether A and B dataset match with each other
+dbListTables(dcon)
+dbListFields(dcon, "houseA") 
+identical(dbListFields(dcon, "houseA"), dbListFields(dcon, "houseB"))
+
+dbListFields(dcon, "peopleA") 
+identical(dbListFields(dcon, "peoA"), dbListFields(dcon, "peoB"))
+
+dbDisconnect(dcon)
