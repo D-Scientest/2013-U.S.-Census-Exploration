@@ -7,8 +7,7 @@ library(choroplethrMaps)
 library(grid)
 library(scales)
 
-dir <- "D:/15-16Term/605/Final project/Kaggle data/data/pums/"
-setwd("D:/15-16Term/605/Final project")
+dir <- "....../pums/" #directory where data stored
 
 dcon <- dbConnect(SQLite(), dbname="Final_project_sqlite")
 
